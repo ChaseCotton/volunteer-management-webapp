@@ -30,13 +30,10 @@
     </div>
   
     <div class="form-control mb-6">
-      <button class="btn btn-primary w-full" on:click={signIn}>Sign In</button>
-    </div>
-  
-    <div class="form-control">
-      <button class="btn btn-secondary w-full">
-        <a href="/login/signup">Sign Up</a>
-      </button>
+      <button class="btn btn-primary w-full">Sign In</button>
     </div>
   </form>
+  <div class="form-control">
+    <button class="btn btn-secondary w-full"><a href="/login/signup">Sign Up</a></button>
+  </div>
 </div>
