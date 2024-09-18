@@ -34,9 +34,13 @@
     </div>
   
     <div class="form-control">
+<<<<<<< Updated upstream
       <button class="btn btn-secondary w-full">
         <a href="/login/signup">Sign Up</a>
       </button>
+=======
+      <button class="btn btn-secondary w-full">Sign Up!</button>
+>>>>>>> Stashed changes
     </div>
   </form>
 </div>
