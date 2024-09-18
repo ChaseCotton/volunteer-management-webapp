@@ -19,14 +19,14 @@
       <label for="user" class="label">
         <span class="label-text">Username</span>
       </label>
-      <input type="email" id="user" name="user" placeholder="Enter your username" class="input input-bordered w-full" />
+      <input type="email" id="user" name="user" placeholder="Enter your username" class="input input-bordered w-full" required/>
     </div>
   
     <div class="form-control mb-4">
       <label for="pass" class="label">
         <span class="label-text">Password</span>
       </label>
-      <input type="password" id="pass" name="pass" placeholder="Enter your password" class="input input-bordered w-full" />
+      <input type="password" id="pass" name="pass" placeholder="Enter your password" class="input input-bordered w-full" required/>
     </div>
   
     <div class="form-control mb-6">
