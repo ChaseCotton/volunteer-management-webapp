@@ -19,7 +19,7 @@
       <label for="user" class="label">
         <span class="label-text">Username</span>
       </label>
-      <input type="text" id="user" name="user" placeholder="Enter your username" class="input input-bordered w-full" />
+      <input type="email" id="user" name="user" placeholder="Enter your username" class="input input-bordered w-full" />
     </div>
   
     <div class="form-control mb-4">
