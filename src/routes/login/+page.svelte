@@ -34,7 +34,9 @@
     </div>
   
     <div class="form-control">
-      <button class="btn btn-secondary w-full">Sign Up</button>
+      <button class="btn btn-secondary w-full">
+        <a href="/login/signup">Sign Up</a>
+      </button>
     </div>
   </form>
 </div>
