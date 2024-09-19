@@ -12,7 +12,6 @@
   }
 </script>
 <div class="flex flex-col w-full max-w-xs mx-auto mt-8">
-<<<<<<< HEAD
 <form id="loginForm">
   <p class="text-lg font-semibold mb-4">Login</p>
 
@@ -40,30 +39,4 @@
     </button>
   </div>
 </form>
-=======
-  <form id="loginForm">
-    <p class="text-lg font-semibold mb-4">Login</p>
-  
-    <div class="form-control mb-4">
-      <label for="user" class="label">
-        <span class="label-text">Username</span>
-      </label>
-      <input type="email" id="user" name="user" placeholder="Enter your username" class="input input-bordered w-full" required/>
-    </div>
-  
-    <div class="form-control mb-4">
-      <label for="pass" class="label">
-        <span class="label-text">Password</span>
-      </label>
-      <input type="password" id="pass" name="pass" placeholder="Enter your password" class="input input-bordered w-full" required/>
-    </div>
-  
-    <div class="form-control mb-6">
-      <button class="btn btn-primary w-full">Sign In</button>
-    </div>
-  </form>
-  <div class="form-control">
-    <button class="btn btn-secondary w-full"><a href="/login/signup">Sign Up</a></button>
-  </div>
->>>>>>> 1233574f94e2d7e7b143e57d1d8db372146184c4
 </div>
