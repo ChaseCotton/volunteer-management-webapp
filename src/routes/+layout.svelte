@@ -22,6 +22,7 @@
         <a href="/login" class="btn btn-ghost">Login</a>
         <a href="/login/userprofile" class="btn btn-ghost">User Profile Management</a>
         <a href="/volunteermatching" class="btn btn-ghost">Volunteer Matching</a>
+        <a href="/volunteerHistory" class="btn btn-ghost">Volunteer History</a>
     </div>
 
     <div class="navbar-end">

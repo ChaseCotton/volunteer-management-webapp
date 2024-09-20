@@ -11,3 +11,7 @@
 <button class="btn">
     <a href="/volunteermatching">Volunteer Matching</a>
 </button>
+
+<button class="btn">
+    <a href="/volunteerHistory">Volunteer History</a>
+</button>
