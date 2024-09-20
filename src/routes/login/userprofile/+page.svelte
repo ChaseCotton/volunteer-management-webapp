@@ -2,15 +2,53 @@
   import type { PageData } from '../signin/$types';
   export let data: PageData;
 
-  function signIn() {
-    const user = document.getElementById('user').value;
-    const pass = document.getElementById('pass').value;
-
-    // Output the form values to the console
-    console.log("Email:", user);
-    console.log("Password:", pass);
+  function Confirm() {
+    const name = document.getElementById('name');
+    const addy = document.getElementById('addy');
+    const addy2 = document.getElementById('addy2');
+    const city = document.getElementById('city');
+    const state = document.getElementById('state');
+    const zip = document.getElementById('zip');
+    const skills = document.getElementById('skills');
+    const preferences = document.getElementById('preferences');
+    const datesAvailableWork = dateList;
+    if (name) console.log("Name: ", name.value);
+    if (addy) console.log("Address 1: ", addy.value);
+    if (addy2) console.log("Address 2: ", addy2.value);
+    if (city) console.log("City: ", city.value);
+    if (state) console.log("State: ", state.value);
+    if (zip) console.log("Zip Code: ", zip.value);
+    if (skills) console.log("Skills: ", skills.value);
+    if (preferences) console.log("Preferences: ", preferences.value);
+    console.log("datesAvailableWork: ", datesAvailableWork);
   }
+
+  let dateList = [];
+  let dateValue = "";
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    dateList = [...dateList, dateValue];
+    console.log('Selected date:', dateValue);
+    dateValue = "";
+  }
+
+function deleteDate(dateToRemove) {
+  dateList = dateList.filter(date => date != dateToRemove);
+}
+
 </script>
+
+<style>
+  .deleteCustomByJay {
+    color:green;
+  }
+
+  .deleteCustomByJay:hover {
+    color:red;
+  }
+</style>
+
 <div class="flex flex-col w-full max-w-xs mx-auto mt-8">
 <form id="loginForm">
   <p class="text-lg font-semibold mb-4">User Profile</p>
@@ -47,7 +85,7 @@
     <label for="state" class="label">
       <span class="label-text">State</span>
     </label>
-    <select name="state" class="input input-bordered w-full" required>
+    <select name="state" id="state" class="input input-bordered w-full" required>
         <option value="" disabled selected hidden>State of Address</option>
         <option value="AL">AL</option>
         <option value="AK">AK</option>
@@ -113,7 +151,7 @@
     <label for="skills" class="label">
       <span class="label-text">Skills: </span>
     </label>
-    <select class="input input-bordered w-full" name="options" multiple>
+    <select class="input input-bordered w-full" id="skills" name="options" multiple>
         <option value="communication">Communication</option>
         <option value="teamwork">Teamwork</option>
         <option value="reliability">Reliability</option>
@@ -131,34 +169,30 @@
     <label for="preferences" class="label">
       <span class="label-text">Preferences: </span>
     </label>
-    <textarea class="textarea textarea-primary" placeholder="Enter Preferences Here"></textarea>
+    <textarea class="textarea textarea-primary" id="preferences" placeholder="Enter Preferences Here"></textarea>
   </div>
 
+  <form on:submit={handleSubmit}>
+    <div class="flex items-center mb-4 space-x-2"> 
+      <label for="dateFilter" class="label">
+        <span class="label-text">Add Dates You Are Available:</span>
+      </label>
+      <input type="date" id="dateAdd" bind:value={dateValue} class="input input-bordered w-64"/>
+      <button type="submit">Add</button>
+    </div>
+  </form>
 
-  <h1>Select Dates</h1>
-  <input type="date" id="datePicker">
-  <button id="addDate">Add Date</button>
-
-  <h2>Selected Dates:</h2>
-  <ul id="dateList"></ul>
-
-    <script>
-        const date = document.getElementById('datePicker');
-        const addDateButton = document.getElementById('addDate');
-        const dateList = document.getElementById('dateList');
-
-        let data = ["Feb 24 2025", "Sh", "Sita", "Gita"];
-        let list = document.getElementById("myList");
-        for (i = 0; i < data.length; ++i) {
-            let li = document.createElement('li');
-            li.innerText = data[i];
-            list.appendChild(li);
-        }
-    </script>
-
+  <div class="flex items-center mb-4 space-x-2">
+    <label for="datesA" class="label">
+      <span class="label-text">Dates You Are Available:</span>
+    </label>
+    {#each dateList as date}
+      <button class="deleteCustomByJay" on:click={() => deleteDate(date)}>{date}</button>
+    {/each}
+  </div>
 
   <div class="form-control mb-6">
-    <button class="btn btn-primary w-full" on:click={signIn}>Sign In</button>
+    <button class="btn btn-primary w-full" on:click={Confirm}>Confirm</button>
   </div>
 
 
