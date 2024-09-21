@@ -15,3 +15,7 @@
 <button class="btn">
     <a href="/volunteerHistory">Volunteer History</a>
 </button>
+
+<button class="btn">
+    <a href="/notificationSystem">Notification System</a>
+</button>
