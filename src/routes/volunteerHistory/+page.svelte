@@ -1,6 +1,6 @@
 <script>
   export const eventHistory = [
-    { name: "John Doe", event: "Community Cleanup", description: "Cleaning Up Trash", date: "2024-09-30", urgency: "High", skills: ["teamwork", "communication"], location: "Houston", participation: "yes", performance:8},
+    { name: "John Doe", event: "Community Cleanup", description: "Cleaning Up Trash", date: "2024-09-30", urgency: "High", skills: ["Teamwork", "Communication"], location: "Houston", participation: "yes", performance:8},
     { name: "John Doe", event: "Food Bank Support", description: "Sorting and packing food items", date: "2024-10-05", urgency: "Medium", skills: ["Reliability", "Teamwork"], location: "Los Angeles, CA", participation: "Yes", performance: 7 },
     { name: "John Doe", event: "Tree Planting Drive", description: "Planting trees in urban areas", date: "2024-10-10", urgency: "High", skills: ["Empathy", "Teamwork"], location: "Seattle, WA", participation: "Yes", performance: 9 },
     { name: "John Doe", event: "Senior Home Visits", description: "Spending time with elderly residents", date: "2024-10-15", urgency: "Low", skills: ["Communication", "Empathy"], location: "Chicago, IL", participation: "Yes", performance: 8 },

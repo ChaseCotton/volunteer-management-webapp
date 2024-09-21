@@ -8,7 +8,7 @@
 ]     
 </script>
 
-<h2 class="text-xl font-semibold mb-4 text-center">Volunteer History</h2>
+<h2 class="text-xl font-semibold mb-4 text-center">Notification System</h2>
 <div class="overflow-x-auto">
     <table class="table w-full bg-base-100">
       <thead>
