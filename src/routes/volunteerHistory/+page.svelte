@@ -44,10 +44,63 @@
     { name: "Jane Smith", event: "Disaster Relief", description: "Supporting disaster relief efforts", date: "2024-11-07", urgency: "High", skills: ["Adaptability", "Teamwork"], location: "New Orleans, LA", participation: "Yes", performance: 7 },
     { name: "Jane Smith", event: "Cultural Festival", description: "Volunteering at a cultural celebration", date: "2024-12-15", urgency: "Low", skills: ["Positivity", "Communication"], location: "San Antonio, TX", participation: "No", performance: null }
     ];
+
+    let nameFilter = '';
+    let eventFilter = '';
+    let eventHistory2 = eventHistory;
+
+    export const filterVolunteerHistory = (name) => {
+      return eventHistory.filter(history => 
+        !name || history.name.toLowerCase() === name.toLowerCase()
+      );
+    };
+
+    export const filterEventHistory = (event) => {
+      return eventHistory.filter(history => 
+        !event || history.event.toLowerCase() === event.toLowerCase()
+      );
+    };
+
+    function applyFilter() 
+    {
+      eventHistory2 = filterVolunteerHistory(nameFilter);
+    }
+
+    function applyFilter2() 
+    {
+      eventHistory2 = filterEventHistory(eventFilter);
+    }
+
+
 </script>
 
 <h2 class="text-xl font-semibold mb-4 text-center">Volunteer History</h2>
 <div class="overflow-x-auto">
+  <div class="flex items-center mb-4 space-x-2 justify-center items-center"> 
+    <label for="nameFilter" class="label">
+      <span class="label-text">Filter by Name:</span>
+    </label>
+    <input 
+      type="name" 
+      id="nameFilter" 
+      bind:value={nameFilter} 
+      class="input input-bordered w-64"
+    />
+    <button class="btn btn-primary w-20" on:click={applyFilter}>Apply</button>
+    <p class="w-40">
+
+    </p>
+    <label for="nameFilter" class="label">
+      <span class="label-text">Filter by Event:</span>
+    </label>
+    <input 
+      type="event" 
+      id="eventFilter" 
+      bind:value={eventFilter} 
+      class="input input-bordered w-64"
+    />
+    <button class="btn btn-primary w-20" on:click={applyFilter2}>Apply</button>
+  </div>
     <table class="table w-full bg-base-100">
       <thead>
         <tr>
@@ -63,7 +116,7 @@
         </tr>
       </thead>
       <tbody>
-        {#each eventHistory as event1}
+        {#each eventHistory2 as event1}
           <tr>
             <td>{event1.name}</td>
             <td>{event1.event}</td>
