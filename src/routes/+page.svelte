@@ -1,21 +1,16 @@
-<h1>Home I just kept the buttons here for now idk</h1>
+<script lang="ts">
+    import "tailwindcss/tailwind.css";
+</script>
 
-<button class="btn">
-    <a href="/login">login</a>
-</button>
+<div class="bg-base-100 flex flex-col justify-center items-center overflow-hidden mt-24">
+    <!-- Title and Description -->
+    <header class="text-center mb-12 px-4 w-full max-w-2xl mt-auto">
+        <h1 class="text-4xl font-semibold">Volunteer Management System</h1>
+        <p class="mt-4 text-lg">A web application containing a login, user registration, profile management, event management, volunteer matching, notifications, and volunteer history tracking.</p>
+    </header>
 
-<button class="btn">
-    <a href="/login/userprofile">User Profile Management</a>
-</button>
-
-<button class="btn">
-    <a href="/volunteermatching">Volunteer Matching</a>
-</button>
-
-<button class="btn">
-    <a href="/volunteerHistory">Volunteer History</a>
-</button>
-
-<button class="btn">
-    <a href="/notificationSystem">Notification System</a>
-</button>
+    <!-- Login Button -->
+    <a href="/login" class="btn flex items-center justify-center h-12 px-10 text-lg bg-blue-400 hover:bg-blue-500 text-black font-semibold rounded-lg transition duration-300 ease-in-out mb-auto">
+        Login
+    </a>
+</div>
