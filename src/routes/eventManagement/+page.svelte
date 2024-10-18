@@ -29,7 +29,7 @@
   const skillsOptions: string[] = ['Teamwork', 'Leadership', 'Empathy', 'Reliability', 'Communication'];
   const urgencyOptions: string[] = ['Low', 'Medium', 'High'];
   
-  let eventMap: Map<string, Event> = new Map([
+  let eventMap = new Map([
     ['Event 1', new Event('Event 1', 'Description 1', 'Location 1', ['Teamwork', 'Leadership'], 'High', '2024-10-01')],
     ['Event 2', new Event('Event 2', 'Description 2', 'Location 2', ['Empathy', 'Communication'], 'Medium', '2024-10-10')]
   ]);
@@ -37,6 +37,7 @@
   function deleteEvent(eventName: string) 
   {
     eventMap.delete(eventName);
+    eventMap = new Map(eventMap);
   }
 
   function handleSubmit() 
@@ -44,6 +45,7 @@
     if (!eventName) return;
     const newEvent = new Event(eventName, eventDescription, location, requiredSkills, urgency, eventDate);
     eventMap.set(eventName, newEvent);
+    eventMap = new Map(eventMap);
     resetForm();
   }
 
