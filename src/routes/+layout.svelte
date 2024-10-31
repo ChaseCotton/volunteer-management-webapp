@@ -19,14 +19,6 @@
 		return () => data.subscription.unsubscribe()
 	})
 </script>
-
-<svelte:head>
-	<title>User Management</title>
-</svelte:head>
-
-<div class="container" style="padding: 50px 0 100px 0">
-	<slot />
-</div>
 <div class="navbar bg-base-200">
     <div class="navbar-start"></div>
 

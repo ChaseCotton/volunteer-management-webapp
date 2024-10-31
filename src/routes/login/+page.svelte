@@ -1,4 +1,5 @@
 <script lang="ts">
+  
   let isSignUp = false;
   let users: { [key: string]: { password: string; profile: any } } = {};
   let loggedInUser: string | null = null;
