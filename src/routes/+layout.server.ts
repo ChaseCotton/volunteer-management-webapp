@@ -1,12 +1,9 @@
-// src/routes/+layout.server.ts
-import type { LayoutServerLoad } from './$types'
+import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ locals: { safeGetSession }, cookies }) => {
-  const { session, user } = await safeGetSession()
-
+export const load: LayoutServerLoad = async ({ locals }) => {
   return {
-    session,
-    user,
-    cookies: cookies.getAll(),
-  }
-}
+    user: locals.user,
+    supabase: locals.supabase,
+    session: locals.session,
+  };
+};

@@ -1,43 +1,53 @@
 <script lang="ts">
     import "tailwindcss/tailwind.css";
-    import { supabase } from "$lib/supabaseClient.js";
-	import { redirect } from "@sveltejs/kit";
-	import { goto } from "$app/navigation";
+    import { supabase } from "$lib/supabaseClient";
+    import { goto } from "$app/navigation";
   
-    export let data;
     let email = '';
     let password = '';
-  
-    // Function to log email and password values
-    function logValues() {
-      console.log(email);
-      console.log(password);
-    }
-  
-    // Function to sign in with email and password
     async function signInWithEmail() {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if(data){
-        goto('/login')
-      }
-      console.log('hi');
-      console.log(error);
-    }
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
   
-    // Function to sign up with email and password
-    async function signUpWithEmail() {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      console.log(data);
-      console.log(error);
+        if (error) {
+          console.error('Sign-in error:', error.message);
+        } else {
+          console.log('Sign-in successful:', data);
+          if (data) {
+            goto('/login');
+          }
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      }
     }
+    async function signUpWithEmail() {
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+  
+        if (error) {
+          console.error('Sign-up error:', error.message);
+        } else {
+          console.log('Sign-up successful:', data);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      }
+      goto('/protected/profile')
+    }
+    async function signOut() {
+        const { error } = await supabase.auth.signOut()
+        console.log(error)
+}
 
   </script>
+  
   <body>
     <div class="flex justify-center">
       <div class="card w-96 bg-base-100 shadow-xl mt-20 mb-20">
@@ -48,11 +58,11 @@
               <input type="text" class="grow" placeholder="Email" bind:value={email} />
             </label>
             <label class="input input-bordered flex items-center gap-2 mb-2">
-              <input type="password" class="grow" placeholder="password" bind:value={password} />
+              <input type="password" class="grow" placeholder="Password" bind:value={password} />
             </label>
           </div>
           <div class="card-actions justify-end">
-            <button class="btn btn-primary w-full" on:click={signUpWithEmail}>SignUp</button>
+            <button class="btn btn-primary w-full" on:click={signUpWithEmail}>Sign Up</button>
           </div>
           <div class="card-actions justify-end">
             <button class="btn btn-primary w-full" on:click={signInWithEmail}>Login</button>
