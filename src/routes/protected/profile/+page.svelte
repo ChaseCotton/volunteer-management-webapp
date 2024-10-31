@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { PageData } from './$types';
     import { supabase } from '$lib/supabaseClient';
-  
     export let data: PageData;
     let { user } = data;
   
@@ -12,6 +11,7 @@
     let username = '';
     let role: 'Volunteer' | 'Organizer' = 'User';
     let email = '';
+    let event_history: number[] = [];
   
     // Variables for availability
     let tempAvailabilityDates: string[] = [];
@@ -27,7 +27,7 @@
       if (user) {
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('first_name, last_name, full_name, username, availability, skills, role, email')
+          .select('first_name, last_name, full_name, username, availability, skills, role, email, event_history')
           .eq('id', user.id)
           .single();
   
@@ -42,6 +42,7 @@
           selectedSkills = profile.skills || [];
           role = profile.role || 'User';
           email = user.user_metadata.email || '';
+          event_history = profile.event_history || [];
         }
       }
     }
@@ -61,6 +62,7 @@
     async function updateProfile() {
       if (user) {
         full_name = `${first_name} ${last_name}`;
+        showDropdown = false;
         const { error } = await supabase
           .from('profiles')
           .update({ first_name, last_name, full_name, username, availability: tempAvailabilityDates, skills: selectedSkills, role, email})
@@ -69,10 +71,11 @@
         if (error) {
           console.error('Error updating profile:', error.message);
         } else {
-          showDropdown = false;
           alert('Profile updated successfully!');
         }
       }
+        loadProfile();
+        loadUniqueSkills();
     }
   
     function addAvailabilityDate() {
@@ -98,6 +101,16 @@
   
     loadProfile();
     loadUniqueSkills();
+
+    async function logEvn(){
+        const { data: eventTable, error } = await supabase
+        .from('Event_Table')
+        .select('*')
+        .in('event_id', event_history);
+        if(!error){
+            console.log(eventTable)
+        }
+    }
   </script>
   
   <div class="flex flex-col space-y-8 p-4">
@@ -172,4 +185,4 @@
       </div>
     </div>
   </div>
-  
+  <button class="btn btn-success w-full mt-4" on:click={logEvn}>Console Log Event History</button>
