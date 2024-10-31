@@ -17,7 +17,7 @@
         } else {
           console.log('Sign-in successful:', data);
           if (data) {
-            goto('/login');
+            goto('/protected/profile');
           }
         }
       } catch (error) {
