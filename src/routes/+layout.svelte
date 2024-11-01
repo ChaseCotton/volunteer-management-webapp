@@ -45,6 +45,7 @@
         <a on:click={signOut} class="btn btn-ghost">LogOut</a>
       {/if}
       <a href="/volunteermatching" class="btn btn-ghost">Volunteer Matching</a>
+      <a href="/matching" class="btn btn-ghost">Matching</a>
       <a href="/volunteerHistory" class="btn btn-ghost">Volunteer History</a>
       <a href="/eventManagement" class="btn btn-ghost">Event Management</a>
       <a href="/notificationSystem" class="btn btn-ghost">Notification System</a>
