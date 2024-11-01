@@ -1,6 +1,10 @@
 <script lang="ts">
-  class Event 
-  {
+  import { supabase } from '$lib/supabaseClient';
+  import { onMount } from 'svelte';
+
+  // Define the Event class to structure event properties
+  class Event {
+    event_id: string;
     eventName: string;
     eventDescription: string;
     location: string;
@@ -8,8 +12,8 @@
     urgency: string;
     eventDate: string;
 
-    constructor(eventName: string, eventDescription: string, location: string, requiredSkills: string[], urgency: string, eventDate: string) 
-    {
+    constructor(event_id: string, eventName: string, eventDescription: string, location: string, requiredSkills: string[], urgency: string, eventDate: string) {
+      this.event_id = event_id;
       this.eventName = eventName;
       this.eventDescription = eventDescription;
       this.location = location;
@@ -18,7 +22,10 @@
       this.eventDate = eventDate;
     }
   }
-  
+
+  let events: Event[] = []; // Array to store events fetched from Supabase
+
+  // Form fields
   let eventName: string = '';
   let eventDescription: string = '';
   let location: string = '';
@@ -28,29 +35,64 @@
 
   const skillsOptions: string[] = ['Teamwork', 'Leadership', 'Empathy', 'Reliability', 'Communication'];
   const urgencyOptions: string[] = ['Low', 'Medium', 'High'];
-  
-  let eventMap = new Map([
-    ['Event 1', new Event('Event 1', 'Description 1', 'Location 1', ['Teamwork', 'Leadership'], 'High', '2024-10-01')],
-    ['Event 2', new Event('Event 2', 'Description 2', 'Location 2', ['Empathy', 'Communication'], 'Medium', '2024-10-10')]
-  ]);
 
-  function deleteEvent(eventName: string) 
-  {
-    eventMap.delete(eventName);
-    eventMap = new Map(eventMap);
+  // Fetch events from the Supabase database
+  async function fetchEvents() {
+    console.log("Fetching events from Supabase...");
+    const { data, error } = await supabase
+      .from('Event_Table') // Make sure this matches your table name
+      .select('event_id, event_name, description, location, required_skill1, date, urgency, required_skill2, required_skill3, notifications')
+      .order('date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching events:', error.message);
+      return;
+    }
+
+    console.log("Events fetched successfully:", data);
+    events = data.map(event => new Event(
+      event.event_id,
+      event.event_name,
+      event.description,
+      event.location,
+      [event.required_skill1, event.required_skill2, event.required_skill3].filter(Boolean),
+      event.urgency,
+      event.date
+    ));
   }
 
-  function handleSubmit() 
-  {
+  // Insert a new event into Supabase
+  async function handleSubmit() {
     if (!eventName) return;
-    const newEvent = new Event(eventName, eventDescription, location, requiredSkills, urgency, eventDate);
-    eventMap.set(eventName, newEvent);
-    eventMap = new Map(eventMap);
-    resetForm();
+    
+    const newEvent = {
+      event_name: eventName,
+      description: eventDescription,
+      location: location,
+      required_skill1: requiredSkills[0] || null,
+      required_skill2: requiredSkills[1] || null,
+      required_skill3: requiredSkills[2] || null,
+      urgency: urgency,
+      date: eventDate
+    };
+
+    console.log("Inserting event into Supabase:", newEvent);
+    const { data, error } = await supabase
+      .from('Event_Table')
+      .insert([newEvent]);
+
+    if (error) {
+      console.error('Error adding event:', error.message);
+    } else {
+      console.log("Event added successfully:", data);
+      await fetchEvents(); // Refresh events list
+      resetForm(); // Clear form inputs
+    }
   }
 
-  function resetForm() 
-  {
+  // Reset form fields
+  function resetForm() {
+    console.log("Resetting form fields...");
     eventName = '';
     eventDescription = '';
     location = '';
@@ -58,14 +100,36 @@
     urgency = '';
     eventDate = '';
   }
+
+  // Delete an event from Supabase
+  async function deleteEvent(eventId: string) {
+    console.log("Deleting event with ID:", eventId);
+    const { data, error } = await supabase
+      .from('Event_Table')
+      .delete()
+      .eq('event_id', eventId);
+
+    if (error) {
+      console.error('Error deleting event:', error.message);
+    } else {
+      console.log("Event deleted successfully:", data);
+      await fetchEvents(); // Refresh the events list
+    }
+  }
+
+  // Fetch events when the component is mounted
+  onMount(() => {
+    fetchEvents();
+  });
 </script>
 
+<!-- HTML Template to display events -->
 <div class="grid grid-cols-2 gap-6">
   <!-- Left side: Event List -->
   <div>
     <h2 class="text-xl font-semibold mb-4 text-center">Upcoming Events</h2>
     <ul class="list-none space-y-2">
-      {#each Array.from(eventMap.values()) as event}
+      {#each events as event}
         <li class="p-4 border border-gray-200 rounded-lg flex justify-between items-center">
           <div>
             <h3 class="font-semibold">{event.eventName}</h3>
@@ -75,7 +139,7 @@
             <p><strong>Urgency:</strong> {event.urgency}</p>
             <p><strong>Date:</strong> {event.eventDate}</p>
           </div>
-          <button class="btn btn-error btn-sm" on:click={() => deleteEvent(event.eventName)}>Delete</button>
+          <button class="btn btn-error btn-sm" on:click={() => deleteEvent(event.event_id)}>Delete</button>
         </li>
       {/each}
     </ul>
