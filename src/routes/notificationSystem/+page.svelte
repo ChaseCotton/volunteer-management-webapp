@@ -11,15 +11,15 @@
 
   async function loadAllUsers() {
     const { data: profiles, error } = await supabase
-        .from('User_Profile')
-        .select('full_name, history');
+        .from('Profiles')
+        .select('full_name, event_history');
 
     if (error) {
         console.error('Error loading profiles:', error.message);
     } else if (profiles) {
         users = profiles.map(profile => ({
             fullName: profile.full_name || '',
-            history: Array.isArray(profile.history) ? profile.history : [] // Ensure history is an array
+            history: Array.isArray(profile.event_history) ? profile.event_history : [] // Ensure history is an array
         }));
     }
 }
@@ -97,7 +97,6 @@
   </table>
   
   <!-- New section to display events for testing -->
-  <!--
   <h2 class="text-xl font-semibold mb-4 text-center">All Events</h2>
   <table class="table w-full bg-base-100">
     <thead>
@@ -122,10 +121,8 @@
       {/if}
     </tbody>
   </table>
-  -->
 
   <!-- New section to display loaded users for testing -->
-   <!--
   <h2 class="text-xl font-semibold mb-4 text-center">All Users</h2>
   <table class="table w-full bg-base-100">
     <thead>
@@ -148,5 +145,4 @@
       {/if}
     </tbody>
   </table>
-  -->
 </div>
