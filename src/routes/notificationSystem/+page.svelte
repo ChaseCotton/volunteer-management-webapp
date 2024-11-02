@@ -11,7 +11,7 @@
 
   async function loadAllUsers() {
     const { data: profiles, error } = await supabase
-        .from('Profiles')
+        .from('profiles')
         .select('full_name, event_history');
 
     if (error) {
@@ -22,6 +22,7 @@
             history: Array.isArray(profile.event_history) ? profile.event_history : [] // Ensure history is an array
         }));
     }
+    console.log(users)
 }
 
   async function loadAllEvents() {
@@ -69,7 +70,7 @@
   // Immediately invoke the loadData function
   loadData();
 </script>
-
+<button on:click={loadData} class="btn">Update</button>
 <div class="overflow-x-auto">
   <h2 class="text-xl font-semibold mb-4 text-center">Volunteer Notifications</h2>
   <table class="table w-full bg-base-100">
