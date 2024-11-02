@@ -4,7 +4,6 @@
     export let data: PageData;
     let { user } = data;
   
-    // Variables for profile information
     let full_name = '';
     let first_name = '';
     let last_name = '';
@@ -12,22 +11,26 @@
     let role: 'Volunteer' | 'Organizer' = 'User';
     let email = '';
     let event_history: number[] = [];
+    let city = '';
+    let state = '';
+    let address = '';
   
-    // Variables for availability
     let tempAvailabilityDates: string[] = [];
     let dateValue = '';
   
-    // Variables for skills
     let uniqueSkills: string[] = [];
     let selectedSkills: string[] = [];
     let customSkill = '';
     let showDropdown = false;
+    
+    let eventTable: any[] = [];
+    let showEventHistory = false;
   
     async function loadProfile() {
       if (user) {
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('first_name, last_name, full_name, username, availability, skills, role, email, event_history')
+          .select('first_name, last_name, full_name, username, availability, skills, role, email, event_history, city, state, address')
           .eq('id', user.id)
           .single();
   
@@ -43,6 +46,9 @@
           role = profile.role || 'User';
           email = user.user_metadata.email || '';
           event_history = profile.event_history || [];
+          city = profile.city || '';
+          state = profile.state || '';
+          address = profile.address || '';
         }
       }
     }
@@ -65,7 +71,7 @@
         showDropdown = false;
         const { error } = await supabase
           .from('profiles')
-          .update({ first_name, last_name, full_name, username, availability: tempAvailabilityDates, skills: selectedSkills, role, email})
+          .update({ first_name, last_name, full_name, username, availability: tempAvailabilityDates, skills: selectedSkills, role, email, city, state, address })
           .eq('id', user.id);
   
         if (error) {
@@ -74,8 +80,8 @@
           alert('Profile updated successfully!');
         }
       }
-        loadProfile();
-        loadUniqueSkills();
+      loadProfile();
+      loadUniqueSkills();
     }
   
     function addAvailabilityDate() {
@@ -99,18 +105,22 @@
       }
     }
   
-    loadProfile();
-    loadUniqueSkills();
-
-    async function logEvn(){
-        const { data: eventTable, error } = await supabase
+    async function logEvn() {
+      const { data: events, error } = await supabase
         .from('Event_Table')
         .select('*')
         .in('event_id', event_history);
-        if(!error){
-            console.log(eventTable)
-        }
+  
+      if (!error) {
+        eventTable = events || [];
+        showEventHistory = true;
+      } else {
+        console.error('Error fetching event history:', error.message);
+      }
     }
+  
+    loadProfile();
+    loadUniqueSkills();
   </script>
   
   <div class="flex flex-col space-y-8 p-4">
@@ -137,6 +147,18 @@
               <option value="Organizer">Organizer</option>
             </select>
           </div>
+          <div class="form-control">
+            <label for="city" class="label">City:</label>
+            <input id="city" type="text" bind:value={city} class="input input-bordered w-full" />
+          </div>
+          <div class="form-control">
+            <label for="state" class="label">State:</label>
+            <input id="state" type="text" bind:value={state} class="input input-bordered w-full" />
+          </div>
+          <div class="form-control">
+            <label for="address" class="label">Address:</label>
+            <input id="address" type="text" bind:value={address} class="input input-bordered w-full" />
+          </div>
           <button type="submit" class="btn btn-primary w-full">Update Profile</button>
         </form>
       </div>
@@ -144,45 +166,38 @@
       <h1 class="text-2xl font-bold">Please log in to see your information.</h1>
     {/if}
   
-    <div>
-      <h2 class="text-xl font-semibold mb-4">Manage Your Availability</h2>
-      <div class="form-control mb-4">
-        <label for="availability" class="label"><strong>Availability:</strong></label>
-        <ul class="space-y-2">
-          {#each tempAvailabilityDates as date}
-            <li class="flex justify-between items-center">
-              {date} <button type="button" class="btn btn-xs btn-error" on:click={() => removeAvailabilityDate(date)}>Remove</button>
-            </li>
-          {/each}
-        </ul>
-        <div class="flex space-x-2 items-center mt-2">
-          <input type="date" bind:value={dateValue} class="input input-bordered w-full" />
-          <button class="btn" on:click={addAvailabilityDate}>Add Date</button>
-        </div>
-      </div>
+    <div class="flex justify-center mt-4">
+      <button class="btn btn-primary" on:click={logEvn}>Show History</button>
     </div>
   
-    <div>
-      <h2 class="text-xl font-semibold mb-4">Manage Your Skills</h2>
-      <div class="form-control mb-4 relative">
-        <label for="skills" class="label"><strong>Skills:</strong></label>
-        <button class="btn mb-2" on:click={() => showDropdown = !showDropdown}>Select Skills</button>
-        {#if showDropdown}
-          <div class="bg-white border rounded shadow mt-2 p-4 w-full space-y-2">
-            {#each uniqueSkills as skill}
-              <label class="flex items-center space-x-2">
-                <input type="checkbox" bind:group={selectedSkills} value={skill} class="checkbox" />
-                <span>{skill}</span>
-              </label>
+    {#if showEventHistory}
+      <div class="overflow-x-auto mt-4">
+        <h2 class="text-xl font-semibold mb-4">Event History</h2>
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Event Name</th>
+              <th>Description</th>
+              <th>Location</th>
+              <th>Date</th>
+              <th>Urgency</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each eventTable as event, index}
+              <tr>
+                <th>{index + 1}</th>
+                <td>{event.event_name}</td>
+                <td>{event.description}</td>
+                <td>{event.location}</td>
+                <td>{event.date}</td>
+                <td>{event.urgency}</td>
+              </tr>
             {/each}
-            <div class="mt-2">
-              <input type="text" bind:value={customSkill} placeholder="Add a custom skill" class="input input-bordered w-full" />
-              <button class="btn mt-2 w-full" on:click={addCustomSkill}>Add Custom Skill</button>
-            </div>
-            <button class="btn btn-success w-full mt-4" on:click={updateProfile}>Update Skills</button>
-          </div>
-        {/if}
+          </tbody>
+        </table>
       </div>
-    </div>
+    {/if}
   </div>
-  <button class="btn btn-success w-full mt-4" on:click={logEvn}>Console Log Event History</button>
+  
