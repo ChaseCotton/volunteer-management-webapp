@@ -1,188 +1,148 @@
-<script>
-    export const notifications = [
-    { 
-        type: "New Event Notification", 
-        details: "You have been assigned to volunteer at the Toy Drive",
-        eventName: "Toy Drive",
-        volunteerName: "John Doe"
-    },
-    { 
-        type: "Event Match", 
-        details: "We think you would be a great fit for volunteering at the Career Fair",
-        eventName: "Career Fair",
-        volunteerName: "John Doe"
-    },
-    { 
-        type: "A Event Manager Matched You", 
-        details: "An event manager believes you are a great fit for the tutoring role at SJHS",
-        eventName: "Tutoring at SJHS",
-        volunteerName: "John Doe"
-    },
-    { 
-        type: "Reminder", 
-        details: "REMINDER! You are signed up to volunteer at the Baseball Game tmrw at 9 AM CST at Minute Maid Field",
-        eventName: "Baseball Game",
-        volunteerName: "John Doe"
-    },
-    { 
-        type: "Update", 
-        details: "The Book Fair at the Brazoria Neighborhood Library is Canceled",
-        eventName: "Book Fair",
-        volunteerName: "John Doe"
-    },
-    { 
-        type: "Update", 
-        details: "The Book Fair at the Brazoria Neighborhood Library is Canceled",
-        eventName: "Book Fair",
-        volunteerName: "Jane Smith"
-    },
-    { 
-        type: "Reminder", 
-        details: "REMINDER! You are signed up to volunteer at the Book Fair Tommorrow at 10 AM",
-        eventName: "Book Fair",
-        volunteerName: "Jane Smith"
-    },
-    { 
-        type: "Update", 
-        details: "The Football Game Tommorrow at 6 PM is Canceled",
-        eventName: "Football Game",
-        volunteerName: "Justin Jefferson"
-    },
-    { 
-        type: "New Event Notification", 
-        details: "You have been assigned to volunteer at the Food Bank Drive",
-        eventName: "Food Bank Drive",
-        volunteerName: "Emily Smith"
-    },
-    { 
-        type: "Event Match", 
-        details: "We think you would be a great fit for volunteering at the Beach Cleanup",
-        eventName: "Beach Cleanup",
-        volunteerName: "Michael Johnson"
-    },
-    { 
-        type: "A Event Manager Matched You", 
-        details: "An event manager believes you are a great fit for the Recycling Campaign at Green Park",
-        eventName: "Recycling Campaign",
-        volunteerName: "Sophia Davis"
-    },
-    { 
-        type: "Reminder", 
-        details: "REMINDER! You are signed up to volunteer at the Charity Run tomorrow at 8 AM PST at Central Park",
-        eventName: "Charity Run",
-        volunteerName: "Daniel Brown"
-    },
-    { 
-        type: "Update", 
-        details: "The Workshop for New Volunteers has been rescheduled to next week",
-        eventName: "New Volunteer Workshop",
-        volunteerName: "Emma Wilson"
-    },
-    { 
-        type: "New Event Notification", 
-        details: "You have been assigned to volunteer at the Animal Shelter Adoption Day",
-        eventName: "Adoption Day",
-        volunteerName: "Oliver Martinez"
-    },
-    { 
-        type: "Event Match", 
-        details: "We think you would be a great fit for volunteering at the Community Garden Project",
-        eventName: "Community Garden Project",
-        volunteerName: "Isabella Hernandez"
-    },
-    { 
-        type: "A Event Manager Matched You", 
-        details: "An event manager believes you are a great fit for the After-School Tutoring Program",
-        eventName: "After-School Tutoring",
-        volunteerName: "Lucas Anderson"
-    },
-    { 
-        type: "Reminder", 
-        details: "REMINDER! You are signed up to volunteer at the Blood Donation Drive tomorrow at 10 AM EST at City Hall",
-        eventName: "Blood Donation Drive",
-        volunteerName: "Mia Thompson"
-    },
-    { 
-        type: "Update", 
-        details: "The Art Exhibition Fundraiser has been moved to a new location: Downtown Art Center",
-        eventName: "Art Exhibition Fundraiser",
-        volunteerName: "James Taylor"
+<script lang="ts">
+  import type { PageData } from './$types';
+  import { supabase } from '$lib/supabaseClient';
+  
+  export let data: PageData;
+
+  // Variables to hold user data
+  let users: { fullName: string; history: number[] }[] = [];
+  let events: { eventID: number; eventName: string; notifications: string[] }[] = []; 
+  let volunteerNotifications: { volunteerName: string; eventName: string; notification: string }[] = [];
+
+  async function loadAllUsers() {
+    const { data: profiles, error } = await supabase
+        .from('Profiles')
+        .select('full_name, event_history');
+
+    if (error) {
+        console.error('Error loading profiles:', error.message);
+    } else if (profiles) {
+        users = profiles.map(profile => ({
+            fullName: profile.full_name || '',
+            history: Array.isArray(profile.event_history) ? profile.event_history : [] // Ensure history is an array
+        }));
     }
-]    
-
-let nameFilter = '';
-let eventFilter = '';
-let notifications2 = notifications;
-
-export const filterVolunteerHistory = (name) => {
-  return notifications2.filter(history => 
-    !name || history.volunteerName.toLowerCase() === name.toLowerCase()
-  );
-};
-
-export const filterEventHistory = (event) => {
-  return notifications2.filter(history => 
-    !event || history.eventName.toLowerCase() === event.toLowerCase()
-  );
-};
-
-function applyFilter() 
-{
-  notifications2 = filterVolunteerHistory(nameFilter);
 }
 
-function applyFilter2() 
-{
-  notifications2 = filterEventHistory(eventFilter);
-}
+  async function loadAllEvents() {
+      const { data: eventList, error } = await supabase
+          .from('Event_Table')
+          .select('event_id, event_name, notifications');
 
+      if (error) {
+          console.error('Error loading events:', error.message);
+      } else if (eventList) {
+          events = eventList.map(event => ({
+              eventID: event.event_id || 0,
+              eventName: event.event_name || '',
+              notifications: Array.isArray(event.notifications) ? event.notifications : [] // Ensure notifications is an array
+          }));
+      }
+  }
+
+  function generateVolunteerNotifications() {
+      volunteerNotifications = []; // Clear previous notifications
+      
+      users.forEach(user => {
+          user.history.forEach(eventID => {
+              const event = events.find(e => e.eventID === eventID);
+              if (event) {
+                  event.notifications.forEach(notification => {
+                      volunteerNotifications.push({
+                          volunteerName: user.fullName,
+                          eventName: event.eventName,
+                          notification: notification // Use individual notification
+                      });
+                  });
+              }
+          });
+      });
+  }
+
+  // Load all users and events when the component mounts
+  async function loadData() {
+      await loadAllUsers();
+      await loadAllEvents();
+      generateVolunteerNotifications(); // Call after both are loaded
+  }
+
+  // Immediately invoke the loadData function
+  loadData();
 </script>
 
-<h2 class="text-xl font-semibold mb-4 text-center">Notification System</h2>
 <div class="overflow-x-auto">
-  <div class="flex items-center mb-4 space-x-2 justify-center items-center"> 
-    <label for="nameFilter" class="label">
-      <span class="label-text">Filter by Name:</span>
-    </label>
-    <input 
-      type="name" 
-      id="nameFilter" 
-      bind:value={nameFilter} 
-      class="input input-bordered w-64"
-    />
-    <button class="btn btn-primary w-20" on:click={applyFilter}>Apply</button>
-    <p class="w-40">
-
-    </p>
-    <label for="nameFilter" class="label">
-      <span class="label-text">Filter by Event:</span>
-    </label>
-    <input 
-      type="event" 
-      id="eventFilter" 
-      bind:value={eventFilter} 
-      class="input input-bordered w-64"
-    />
-    <button class="btn btn-primary w-20" on:click={applyFilter2}>Apply</button>
-  </div>
+  <h2 class="text-xl font-semibold mb-4 text-center">Volunteer Notifications</h2>
   <table class="table w-full bg-base-100">
-      <thead>
+    <thead>
+      <tr>
+        <th>Volunteer Name</th>
+        <th>Event Name</th>
+        <th>Notification</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each volunteerNotifications as { volunteerName, eventName, notification }}
         <tr>
-          <th>Volunteer Name</th>
-          <th>Event Name</th>
-          <th>Notification Type</th>
-          <th>Details</th>
+          <td>{volunteerName}</td>
+          <td>{eventName}</td>
+          <td>{notification}</td>
         </tr>
-      </thead>
-      <tbody>
-        {#each notifications2 as noti}
-          <tr>
-            <td>{noti.volunteerName}</td>
-            <td>{noti.eventName}</td>
-            <td>{noti.type}</td>
-            <td>{noti.details}</td>
-          </tr>
-        {/each}
-      </tbody>
+      {/each}
+      {#if volunteerNotifications.length === 0}
+        <tr>
+          <td colspan="3" class="text-center">No notifications available.</td>
+        </tr>
+      {/if}
+    </tbody>
+  </table>
+  
+  <!-- New section to display events for testing -->
+  <h2 class="text-xl font-semibold mb-4 text-center">All Events</h2>
+  <table class="table w-full bg-base-100">
+    <thead>
+      <tr>
+        <th>Event ID</th>
+        <th>Event Name</th>
+        <th>Notifications</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each events as { eventID, eventName, notifications }}
+        <tr>
+          <td>{eventID}</td>
+          <td>{eventName}</td>
+          <td>{notifications.join(', ')}</td>
+        </tr>
+      {/each}
+      {#if events.length === 0}
+        <tr>
+          <td colspan="3" class="text-center">No events available.</td>
+        </tr>
+      {/if}
+    </tbody>
+  </table>
+
+  <!-- New section to display loaded users for testing -->
+  <h2 class="text-xl font-semibold mb-4 text-center">All Users</h2>
+  <table class="table w-full bg-base-100">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>History</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each users as { fullName, history }}
+        <tr>
+          <td>{fullName}</td>
+          <td>{history.join(', ')}</td>
+        </tr>
+      {/each}
+      {#if users.length === 0}
+        <tr>
+          <td colspan="2" class="text-center">No users available.</td>
+        </tr>
+      {/if}
+    </tbody>
   </table>
 </div>
