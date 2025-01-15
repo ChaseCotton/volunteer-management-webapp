@@ -1,14 +1,4 @@
-# Volunteer Management System
-
-Team 1 Project - COSC 4353:
-
-Chase Cotton
-
-Jay Jacob Davis
-
-Kishan Chauhan
-
-### Note: This project is deprecated from the database.
+## Note: This project is deprecated from the database.
 
 # Tech Stack
 
